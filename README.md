@@ -1,6 +1,6 @@
 # Events Microservice
 
-Microsserviço desenvolvido em Java com Spring Boot para gerenciamento de eventos e inscrições de participantes, com integração a um serviço externo de envio de e-mails.
+Microsserviço desenvolvido em Java com Spring Boot para gerenciamento de eventos e inscrições de participantes, com integração a um segundo microsserviço responsável pelo envio de e-mails de confirmação.
 
 ## Tecnologias utilizadas
 
@@ -31,7 +31,7 @@ Antes de executar o projeto, é necessário ter instalado:
 - Git.
 - Uma IDE, como IntelliJ IDEA ou Visual Studio Code.
 
-O microsserviço de envio de e-mails também deve estar em execução para que a funcionalidade de confirmação por e-mail funcione.
+Além disso, para que a funcionalidade de confirmação por e-mail funcione, o microsserviço de envio de e-mails também deve estar em execução.
 
 ## Como executar o projeto
 
@@ -61,7 +61,7 @@ No Linux ou macOS:
 ./mvnw spring-boot:run
 ```
 
-A aplicação será iniciada na porta 8081.
+A aplicação será iniciada na porta `8081`.
 
 ## Endpoints disponíveis
 
@@ -100,7 +100,7 @@ A API possui os seguintes endpoints:
 }
 ```
 
-Após a inscrição, o sistema registra o participante e solicita o envio de um e-mail de confirmação ao microsserviço de e-mail.
+Após a inscrição, o sistema registra o participante, atualiza a quantidade de inscritos e solicita o envio de um e-mail de confirmação ao microsserviço de e-mail.
 
 ## Banco de dados
 
@@ -108,20 +108,33 @@ O projeto utiliza o H2 Database em memória, integrado ao Spring Data JPA.
 
 Como o banco é configurado em memória, os dados cadastrados são perdidos quando a aplicação é encerrada.
 
-## Integração com o serviço de e-mail
+## Integração com o microsserviço de envio de e-mails
 
 A comunicação entre os microsserviços é realizada por meio de requisições HTTP, utilizando Spring Cloud OpenFeign.
 
-O serviço de eventos envia uma solicitação ao microsserviço de e-mail, que é responsável pelo envio da mensagem de confirmação utilizando a AWS Simple Email Service (SES).
+O `events-microservice` envia uma solicitação ao segundo microsserviço, responsável pelo envio da mensagem de confirmação utilizando a AWS Simple Email Service (SES).
 
-Por padrão, o serviço de e-mail deve estar disponível em:
+O microsserviço de envio de e-mails foi desenvolvido com base no projeto de referência da Fernanda Kipper:
+
+- **Repositório:** [desafio-backend-uber](https://github.com/Fernanda-Kipper/desafio-backend-uber)
+
+Para que a integração funcione, o serviço de e-mail deve estar em execução na porta `8080`, disponibilizando o endpoint:
 
 ```text
 http://localhost:8080/api/email/send
 ```
 
-E o microsserviço de eventos utiliza a porta `8081`.
+O microsserviço de eventos, por sua vez, utiliza a porta `8081`.
+
+## Créditos e finalidade educacional
+
+Este projeto foi desenvolvido exclusivamente para fins educacionais, como atividade prática de aprendizado e aplicação dos conceitos de desenvolvimento de microsserviços com Spring Boot.
+
+O desenvolvimento foi baseado no conteúdo apresentado por **Fernanda Kipper**, por meio de seu vídeo sobre construção de microsserviços com Java, acompanhado durante o processo de implementação.
+- **Vídeo de referência:** [CONSTRUINDO MICROSSERVIÇOS COM JAVA – Fernanda Kipper](https://www.youtube.com/watch?v=yACzWg9gUGM)
 
 ## Autora
 
-Desenvolvido por [Sanna Damasceno](https://github.com/sanna-damasceno).
+**Sanna Damasceno**
+
+GitHub: [sanna-damasceno](https://github.com/sanna-damasceno)
