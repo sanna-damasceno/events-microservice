@@ -32,29 +32,22 @@ public class EventService {
     }
 
     public List<Event> getUpcomingEvents() {
-        return eventRepository.findUpcomingEvents(LocalDateTime.now());
+        return eventRepository.findByDateAfterOrderByDate(LocalDateTime.now());
     }
 
     public Event createEvent(EventRequestDTO eventRequest) {
-        Event event = new Event(
-            null,
-            eventRequest.maxParticipants(),
-            eventRequest.registeredParticipants(),
-            eventRequest.date(),
-            eventRequest.title(),
-            eventRequest.description()
-        );
-        return eventRepository.save(event);
+        Event newEvent = new Event(eventRequest);
+        return eventRepository.save(newEvent);
     }
 
-    private Boolean isEventFull(Event event){
+	private Boolean isEventFull(Event event){
         return event.getRegisteredParticipants() >= event.getMaxParticipants();
     }
 
     public void registerParticipant(String eventId, String participantEmail) {
         Event event = eventRepository.findById(eventId).orElseThrow(EventNotFoundException::new);
 
-        if(isEventFull(event)) {
+        if(isEventFull(event)){
             throw new EventFullException();
         }
 
@@ -62,10 +55,9 @@ public class EventService {
         subscriptionRepository.save(subscription);
 
         event.setRegisteredParticipants(event.getRegisteredParticipants() + 1);
-        eventRepository.save(event);
 
         EmailRequestDTO emailRequest = new EmailRequestDTO(participantEmail, "Confirmação de Inscrição", "Você foi inscrito no evento com sucesso!");
 
-        emailServiceClient.sendEmail(emailRequest);
+        emailServiceClient.sendEmail(emailRequest);        
     }
 }
